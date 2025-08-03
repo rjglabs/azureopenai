@@ -1,0 +1,38 @@
+[tool.poetry]
+name = "azure-openai-checks"
+version = "0.1.0"
+description = "Quality assurance and security tools for Azure OpenAI projects"
+authors = ["Your Name <your.email@domain.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.9.2"
+# Code quality tools
+black = "^25.1.0"
+flake8 = "^7.3.0"
+isort = "^6.0.1"
+mypy = "^1.16.1"
+pylint = "^3.3.7"
+# Testing and coverage
+pytest = "^8.4.1"
+pytest-cov = "^6.0.0"
+pytest-xdist = "^3.6.0"
+coverage = "^7.9.2"
+# Security tools
+bandit = "^1.8.6"
+safety = "^3.4.1"
+pip-audit = "^2.9.0"
+# AI security testing
+pyrit = "^0.4.0"
+# Utilities
+rich = "^13.9.4"
+click = "^8.1.8"
+jinja2 = "^3.1.6"
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^4.2.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -12,30 +12,30 @@ graph TB
         KV[🔑 Key Vault<br/>Central Secrets Store]
         RBAC[👥 RBAC Roles<br/>Access Management]
     end
-    
+
     subgraph "🤖 AI Intelligence Services"
         AIS[🔧 AI Services<br/>Traditional AI<br/>• Speech/Vision<br/>• Translation<br/>• Content Safety]
         OAI[🧠 OpenAI Service<br/>Advanced LLMs<br/>• GPT-4o Models<br/>• Embeddings<br/>• Latest Features]
     end
-    
+
     subgraph "📊 Data & Knowledge Platform"
         CS[🔍 Cognitive Search<br/>• Vector Search<br/>• Semantic Ranking<br/>• AI Enrichment]
         SA[💾 Storage Account<br/>• News Articles<br/>• Training Data<br/>• Model Artifacts]
     end
-    
+
     subgraph "📦 Application & Monitoring"
         CR[📦 Container Registry<br/>Custom Models & Apps]
         AI_MON[📈 Application Insights<br/>Performance Monitoring]
         LA[📋 Log Analytics<br/>Centralized Logging]
     end
-    
+
     subgraph "⚛️ Nuclear Intelligence Workflow"
         NEWS[📰 News Ingestion]
         ANALYSIS[🧬 Nuclear Analysis]
         THREATS[⚠️ Threat Assessment]
         SEARCH_INT[🎯 Intelligent Search]
     end
-    
+
     %% Security Layer Connections
     KV -.->|Secrets| AIS
     KV -.->|Secrets| OAI
@@ -45,21 +45,21 @@ graph TB
     RBAC -.->|Access| OAI
     RBAC -.->|Access| CS
     RBAC -.->|Access| SA
-    
+
     %% AI Services Data Flow
     AIS -->|Traditional AI| CS
     OAI -->|Advanced LLMs| CS
     SA -->|Raw Data| CS
     SA <-->|Training Data| AIS
     SA <-->|Model Storage| OAI
-    
+
     %% Application Layer Monitoring
     AI_MON <-- AIS
     AI_MON <-- OAI
     AI_MON <-- CS
     AI_MON <-- CR
     AI_MON --> LA
-    
+
     %% Nuclear Intelligence Data Flow
     NEWS --> SA
     SA --> CS
@@ -70,7 +70,7 @@ graph TB
     ANALYSIS --> THREATS
     CS --> SEARCH_INT
     OAI --> SEARCH_INT
-    
+
     %% Monitoring Flow
     ANALYSIS --> AI_MON
     THREATS --> AI_MON
@@ -86,32 +86,32 @@ flowchart LR
         B[🎙️ Podcasts & Audio]
         C[📄 Regulatory Documents]
     end
-    
+
     subgraph "🔧 Traditional AI Processing"
         D[🗣️ Speech-to-Text]
         E[🌐 Translation Services]
         F[🛡️ Content Safety]
         G[📝 Document Intelligence]
     end
-    
+
     subgraph "💾 Data Storage & Search"
         H[📊 Storage Account<br/>Raw & Processed Data]
         I[🔍 Cognitive Search<br/>Vector & Semantic Search]
     end
-    
+
     subgraph "🧠 Advanced AI Analysis"
         J[🤖 GPT-4o Models<br/>Nuclear Expert Analysis]
         K[📈 Embeddings<br/>Semantic Understanding]
         L[💡 Threat Assessment<br/>Risk Analysis]
     end
-    
+
     subgraph "🎯 Intelligence Outputs"
         M[📊 Threat Reports]
         N[🔎 Intelligent Search]
         O[📈 Trend Analysis]
         P[⚠️ Alert System]
     end
-    
+
     A --> H
     B --> D
     C --> G
@@ -130,13 +130,13 @@ flowchart LR
     L --> O
     M --> P
     O --> P
-    
+
     %% AI Services (Traditional)
     B -.->|Audio Processing| D
     A -.->|Multi-language| E
     H -.->|Content Filter| F
     C -.->|Document OCR| G
-    
+
     %% OpenAI Services (Advanced)
     I -.->|RAG Patterns| J
     I -.->|Semantic Search| K
@@ -150,34 +150,34 @@ graph TD
     subgraph "🔐 Key Vault - Central Security Hub"
         KV_SECRETS[🔑 Stored Secrets<br/>• ai-services-key<br/>• ai-services-endpoint<br/>• cognitive-search-admin-key<br/>• cognitive-search-endpoint<br/>• speechtotext-endpoint<br/>• translator-endpoint]
     end
-    
+
     subgraph "🤖 AI Services Ecosystem"
         AI_UNIFIED[🔧 AI Services Account<br/>aiserv-ai-nukesearch01]
         OPENAI_DEDICATED[🧠 OpenAI Service<br/>openai-nukesearch01]
         SEARCH_SERVICE[🔍 Cognitive Search<br/>cog-ai-nukesearch01]
     end
-    
+
     subgraph "📊 Supporting Infrastructure"
         STORAGE[💾 Storage Account<br/>stnukesearch01]
         CONTAINER[📦 Container Registry<br/>crnukesearch01]
         MONITORING[📈 Application Insights<br/>appi-ai-nukesearch01]
         LOGS[📋 Log Analytics<br/>log-ai-nukesearch01]
     end
-    
+
     KV_SECRETS -.->|Secure Access| AI_UNIFIED
     KV_SECRETS -.->|Secure Access| OPENAI_DEDICATED
     KV_SECRETS -.->|Secure Access| SEARCH_SERVICE
-    
+
     AI_UNIFIED <-->|Data Exchange| STORAGE
     OPENAI_DEDICATED <-->|Model Storage| STORAGE
     SEARCH_SERVICE <-->|Index Data| STORAGE
-    
+
     AI_UNIFIED -->|Performance Metrics| MONITORING
     OPENAI_DEDICATED -->|Usage Tracking| MONITORING
     SEARCH_SERVICE -->|Query Analytics| MONITORING
     STORAGE -->|Access Logs| MONITORING
     CONTAINER -->|Deployment Metrics| MONITORING
-    
+
     MONITORING --> LOGS
 ```
 
@@ -500,7 +500,7 @@ make github
 ```powershell
 # Initialize everything from scratch
 make setup           # Set up virtual environments
-make github          # Create GitHub repository  
+make github          # Create GitHub repository
 make infra-deploy    # Deploy Azure infrastructure
 make quality         # Run quality checks
 ```

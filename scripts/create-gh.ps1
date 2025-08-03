@@ -35,13 +35,13 @@ Write-Host "Repository Root: $RepoRoot" -ForegroundColor Gray
 # Function to load environment configuration
 function Get-GitHubConfig {
     param([string]$ConfigPath)
-    
+
     $FullConfigPath = Join-Path $RepoRoot $ConfigPath
-    
+
     if (-not (Test-Path $FullConfigPath)) {
         Write-Host "❌ Configuration file not found: $FullConfigPath" -ForegroundColor Red
         Write-Host "Creating template configuration file..." -ForegroundColor Yellow
-        
+
         # Create template configuration
         $TemplateConfig = @'
 # GitHub Repository Configuration
@@ -76,15 +76,15 @@ LICENSE=MIT
 AUTO_INIT=false
 GITIGNORE_TEMPLATE=Python
 '@
-        
+
         $TemplateConfigPath = Join-Path $RepoRoot "scripts\.gh-config.env.template"
         Set-Content -Path $TemplateConfigPath -Value $TemplateConfig -Encoding UTF8
-        
+
         Write-Host "📄 Template created: $TemplateConfigPath" -ForegroundColor Green
         Write-Host "Please copy to .gh-config.env and customize, then run the script again." -ForegroundColor Yellow
         exit 1
     }
-    
+
     # Load configuration
     $Config = @{}
     Get-Content $FullConfigPath | ForEach-Object {
@@ -94,7 +94,7 @@ GITIGNORE_TEMPLATE=Python
             $Config[$Key] = $Value
         }
     }
-    
+
     return $Config
 }
 
@@ -123,7 +123,7 @@ function Test-GitHubRepository {
         [string]$Organization,
         [string]$RepositoryName
     )
-    
+
     try {
         $RepoInfo = gh repo view "$Organization/$RepositoryName" --json name 2>$null
         return $LASTEXITCODE -eq 0
@@ -138,59 +138,59 @@ function New-GitHubRepository {
         [hashtable]$Config,
         [switch]$DryRun
     )
-    
+
     $Organization = $Config['GITHUB_ORG']
     $RepoName = $Config['REPO_NAME']
     $Description = $Config['REPO_DESCRIPTION']
     $Visibility = $Config['REPO_VISIBILITY']
     $Topics = $Config['REPO_TOPICS']
-    
+
     # Build GitHub CLI command with correct flags
     $CreateCommand = @(
         "gh", "repo", "create", "$Organization/$RepoName"
         "--description", "`"$Description`""
     )
-    
+
     # Add visibility flag
-    if ($Visibility -eq 'private') { 
+    if ($Visibility -eq 'private') {
         $CreateCommand += "--private"
-    } elseif ($Visibility -eq 'public') { 
+    } elseif ($Visibility -eq 'public') {
         $CreateCommand += "--public"
-    } elseif ($Visibility -eq 'internal') { 
+    } elseif ($Visibility -eq 'internal') {
         $CreateCommand += "--internal"
     }
-    
+
     # Add optional flags (using correct GitHub CLI syntax)
-    if ($Config['GITIGNORE_TEMPLATE']) { 
-        $CreateCommand += "--gitignore", $Config['GITIGNORE_TEMPLATE'] 
+    if ($Config['GITIGNORE_TEMPLATE']) {
+        $CreateCommand += "--gitignore", $Config['GITIGNORE_TEMPLATE']
     }
-    if ($Config['LICENSE']) { 
-        $CreateCommand += "--license", $Config['LICENSE'] 
+    if ($Config['LICENSE']) {
+        $CreateCommand += "--license", $Config['LICENSE']
     }
-    
+
     # Note: GitHub CLI doesn't support --enable-issues, --enable-projects, --enable-wiki flags
     # These need to be configured after repository creation via the API or web interface
-    
+
     Write-Host "🔨 Creating GitHub repository..." -ForegroundColor Green
     Write-Host "   Organization: $Organization" -ForegroundColor Gray
     Write-Host "   Repository: $RepoName" -ForegroundColor Gray
     Write-Host "   Visibility: $Visibility" -ForegroundColor Gray
-    
+
     if ($DryRun) {
         Write-Host "🔍 DRY RUN - Would execute:" -ForegroundColor Yellow
         Write-Host "   $($CreateCommand -join ' ')" -ForegroundColor Gray
         return $true
     }
-    
+
     try {
         & $CreateCommand[0] $CreateCommand[1..($CreateCommand.Length-1)]
-        
+
         if ($LASTEXITCODE -eq 0) {
             Write-Host "✅ Repository created successfully" -ForegroundColor Green
-            
+
             # Configure repository settings via GitHub API (since CLI doesn't support all flags)
             Write-Host "🔧 Configuring repository settings..." -ForegroundColor Cyan
-            
+
             # Enable/disable issues (if specified)
             if ($Config['ENABLE_ISSUES']) {
                 $issuesEnabled = $Config['ENABLE_ISSUES'].ToLower() -eq 'true'
@@ -206,7 +206,7 @@ function New-GitHubRepository {
                     Write-Host "   ⚠️ Could not configure issues setting" -ForegroundColor Yellow
                 }
             }
-            
+
             # Enable/disable wiki (if specified)
             if ($Config['ENABLE_WIKI']) {
                 $wikiEnabled = $Config['ENABLE_WIKI'].ToLower() -eq 'true'
@@ -222,7 +222,7 @@ function New-GitHubRepository {
                     Write-Host "   ⚠️ Could not configure wiki setting" -ForegroundColor Yellow
                 }
             }
-            
+
             # Enable/disable projects (if specified)
             if ($Config['ENABLE_PROJECTS']) {
                 $projectsEnabled = $Config['ENABLE_PROJECTS'].ToLower() -eq 'true'
@@ -238,7 +238,7 @@ function New-GitHubRepository {
                     Write-Host "   ⚠️ Could not configure projects setting" -ForegroundColor Yellow
                 }
             }
-            
+
             # Enable/disable discussions (if specified)
             if ($Config['ENABLE_DISCUSSIONS']) {
                 $discussionsEnabled = $Config['ENABLE_DISCUSSIONS'].ToLower() -eq 'true'
@@ -254,7 +254,7 @@ function New-GitHubRepository {
                     Write-Host "   ⚠️ Could not configure discussions setting" -ForegroundColor Yellow
                 }
             }
-            
+
             # Add topics if specified
             if ($Topics) {
                 Write-Host "🏷️ Adding repository topics..." -ForegroundColor Cyan
@@ -270,7 +270,7 @@ function New-GitHubRepository {
                     Write-Host "   ⚠️ Could not add topics: $Topics" -ForegroundColor Yellow
                 }
             }
-            
+
             return $true
         } else {
             Write-Host "❌ Failed to create repository" -ForegroundColor Red
@@ -288,67 +288,67 @@ function Initialize-LocalGitRepository {
         [hashtable]$Config,
         [switch]$DryRun
     )
-    
+
     $Organization = $Config['GITHUB_ORG']
     $RepoName = $Config['REPO_NAME']
     $DefaultBranch = $Config['DEFAULT_BRANCH'] -or 'main'
-    
+
     Write-Host "📦 Initializing local git repository..." -ForegroundColor Green
-    
+
     Set-Location $RepoRoot
-    
+
     if ($DryRun) {
         Write-Host "🔍 DRY RUN - Would execute git commands" -ForegroundColor Yellow
         return $true
     }
-    
+
     try {
         # Initialize git if not already initialized
         if (-not (Test-Path ".git")) {
             git init
             Write-Host "✅ Git repository initialized" -ForegroundColor Green
         }
-        
+
         # Set default branch
         git branch -M $DefaultBranch
-        
+
         # Add remote origin
         $RemoteUrl = "https://github.com/$Organization/$RepoName.git"
-        
+
         # Remove existing origin if it exists
         $ExistingRemote = git remote get-url origin 2>$null
         if ($ExistingRemote) {
             git remote remove origin
         }
-        
+
         git remote add origin $RemoteUrl
         Write-Host "✅ Remote origin set to: $RemoteUrl" -ForegroundColor Green
-        
+
         # Create initial commit if no commits exist
         $CommitCount = git rev-list --count HEAD 2>$null
         if (-not $CommitCount -or $CommitCount -eq 0) {
             # Stage all files
             git add .
-            
+
             # Create initial commit
             git commit -m "Initial commit: Azure OpenAI repository setup
-            
+
 🚀 Repository Features:
 - Infrastructure deployment scripts
-- AI agent development environment  
+- AI agent development environment
 - Quality assurance and security tools
 - Comprehensive documentation
 - CI/CD workflows ready
 
 Created with automated setup script."
-            
+
             Write-Host "✅ Initial commit created" -ForegroundColor Green
         }
-        
+
         # Push to GitHub
         git push -u origin $DefaultBranch
         Write-Host "✅ Code pushed to GitHub" -ForegroundColor Green
-        
+
         return $true
     } catch {
         Write-Host "❌ Error with git operations: $_" -ForegroundColor Red
@@ -362,22 +362,22 @@ function Set-BranchProtection {
         [hashtable]$Config,
         [switch]$DryRun
     )
-    
+
     if ($Config['REQUIRE_PR_REVIEWS'] -ne 'true' -and $Config['REQUIRE_STATUS_CHECKS'] -ne 'true') {
         return $true
     }
-    
+
     $Organization = $Config['GITHUB_ORG']
     $RepoName = $Config['REPO_NAME']
     $DefaultBranch = $Config['DEFAULT_BRANCH'] -or 'main'
-    
+
     Write-Host "🛡️ Configuring branch protection..." -ForegroundColor Green
-    
+
     if ($DryRun) {
         Write-Host "🔍 DRY RUN - Would configure branch protection" -ForegroundColor Yellow
         return $true
     }
-    
+
     try {
         $ProtectionCommand = @(
             "gh", "api", "repos/$Organization/$RepoName/branches/$DefaultBranch/protection"
@@ -387,15 +387,15 @@ function Set-BranchProtection {
             "--field", "required_pull_request_reviews={`"required_approving_review_count`":1,`"dismiss_stale_reviews`":true}"
             "--field", "restrictions=null"
         )
-        
+
         & $ProtectionCommand[0] $ProtectionCommand[1..($ProtectionCommand.Length-1)] >$null 2>&1
-        
+
         if ($LASTEXITCODE -eq 0) {
             Write-Host "✅ Branch protection configured" -ForegroundColor Green
         } else {
             Write-Host "⚠️ Branch protection setup skipped (may require admin permissions)" -ForegroundColor Yellow
         }
-        
+
         return $true
     } catch {
         Write-Host "⚠️ Could not configure branch protection: $_" -ForegroundColor Yellow
@@ -406,7 +406,7 @@ function Set-BranchProtection {
 # Main execution
 function Main {
     Write-Host ""
-    
+
     # Load configuration
     try {
         $Config = Get-GitHubConfig -ConfigPath $ConfigFile
@@ -415,16 +415,16 @@ function Main {
         Write-Host "❌ Failed to load configuration: $_" -ForegroundColor Red
         exit 1
     }
-    
+
     # Validate GitHub CLI and authentication
     if (-not (Test-GitHubAuth)) {
         exit 1
     }
-    
+
     # Check if repository already exists
     $Organization = $Config['GITHUB_ORG']
     $RepoName = $Config['REPO_NAME']
-    
+
     if (Test-GitHubRepository -Organization $Organization -RepositoryName $RepoName) {
         if ($Force) {
             Write-Host "⚠️ Repository exists. Deleting and recreating..." -ForegroundColor Yellow
@@ -437,20 +437,20 @@ function Main {
             exit 1
         }
     }
-    
+
     # Create GitHub repository
     if (-not (New-GitHubRepository -Config $Config -DryRun:$DryRun)) {
         exit 1
     }
-    
+
     # Initialize local git repository
     if (-not (Initialize-LocalGitRepository -Config $Config -DryRun:$DryRun)) {
         exit 1
     }
-    
+
     # Configure branch protection
     Set-BranchProtection -Config $Config -DryRun:$DryRun | Out-Null
-    
+
     # Final success message
     Write-Host ""
     Write-Host "🎉 GitHub repository setup complete!" -ForegroundColor Green
