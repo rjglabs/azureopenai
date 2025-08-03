@@ -1,0 +1,55 @@
+# Development Dependencies for Azure OpenAI Infrastructure
+# Requires Python 3.13+ for latest security and performance features
+# Install with: pip install -r dev-requirements.txt
+
+# Code Formatting & Quality
+black==25.1.0
+isort==6.0.1
+flake8==7.3.0
+mypy==1.16.1
+
+# Testing Framework
+pytest==8.4.1
+pytest-cov==6.0.0
+pytest-asyncio==0.24.0
+pytest-mock==3.14.0
+
+# Security Scanning
+bandit==1.8.6
+safety==3.2.0
+pip-audit==2.7.3
+
+# Pre-commit Hooks
+pre-commit==4.2.0
+
+# Type Stubs
+types-requests==2.31.0.20240406
+types-setuptools==75.6.0.20241126
+
+# Documentation
+sphinx==8.1.3
+sphinx-rtd-theme==3.0.2
+
+# Debugging & Development (Python 3.12 compatible)
+ipython==8.30.0
+pdbpp==0.10.3
+
+# Environment Management
+python-dotenv==1.1.1
+
+# Additional Linting
+flake8-docstrings==1.7.0
+flake8-import-order==0.18.2
+flake8-black==0.3.6
+flake8-isort==6.1.1
+
+# Code Complexity Analysis
+radon==6.0.1
+xenon==0.9.1
+
+# Dependency Analysis
+pipdeptree==2.23.4
+
+# Additional Python 3.12 Security Tools
+semgrep==1.97.0
+cyclonedx-bom==4.8.0
