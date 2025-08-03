@@ -3,15 +3,16 @@
 Comprehensive quality checks for Azure OpenAI repository
 """
 
+import json
 import subprocess
 import sys
-import json
 from pathlib import Path
-from typing import Dict, List, Tuple, Any
+from typing import Any, Dict, List, Tuple
+
 import click
 from rich.console import Console
-from rich.table import Table
 from rich.panel import Panel
+from rich.table import Table
 
 console = Console()
 
