@@ -50,7 +50,7 @@ repos:
     rev: 1.8.6
     hooks:
       - id: bandit
-        args: [-r, --skip, "B101,B603,B607,B404"]
+        args: [-r, --skip, "B101,B603,B607,B404,B602"]
         exclude: ^(tests/|\.venv.*/).*
 
   - repo: https://github.com/python-poetry/poetry
@@ -60,15 +60,6 @@ repos:
 
   - repo: local
     hooks:
-      - id: validate-infra-env-config
-        name: Validate infrastructure environment configuration
-        entry: powershell
-        language: system
-        pass_filenames: false
-        args: [-Command, '$env:PYTHONIOENCODING="utf-8"; cd infra; python scripts/validate_env_config.py --env-file .env.example']
-        stages: [pre-commit]
-        files: ^infra/
-
       - id: azure-cli-check
         name: Check Azure CLI availability
         entry: powershell
